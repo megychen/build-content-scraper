@@ -14,19 +14,19 @@ function saveData(result, file, folder) {
   //check data folder if already existed
   if(!fs.existsSync(folder)) {
     fs.mkdirSync(folder);
-  } else {
+  }
     // Write the result to data folder
     fs.writeFile(folder + "/" + file, result, function(error) {
       if(error) printError(error, date);
       console.log("File saved.");
     });
-  }
+
 }
 
 // Construct the function to print error message
 var printError = function(error, timestamp) {
   var errText = timestamp + "\n";
-  errText += error;
+  errText += "Error: " + error;
   fs.appendFile("scraper-error.log", errText, function(error) {
     if(error) console.error(error);
     console.log(errText);
@@ -44,10 +44,11 @@ x("http://www.shirts4mike.com/",
     }])
   )
 )(function(err, obj) {
-  // If has error, print error, Otherwise deal with the data
+  // If can not log in the site, print error, Otherwise deal with the data
 
   if(err) {
-    printError(err, date);
+    var errText1 = "Sorry, failed to log in www.shirts4mike.com website.";
+    printError(errText1, date);
   } else {
     var data = obj;
 
@@ -68,7 +69,8 @@ x("http://www.shirts4mike.com/",
       try {
         result = json2csv({data: data, fileds: fileds});
       } catch (error) {
-        printError(error, date); // If failed to create file, print error message
+        errText2 = "Sorry, failed to create csv file.";
+        printError(errText2, date); // If failed to create file, print error message
       }
 
       // Save file to data folder
